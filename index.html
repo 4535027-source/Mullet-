@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原型导航</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    background: #f0f2f5;
+    color: #1f2329;
+    font-size: 14px;
+  }
+  .topbar {
+    background: linear-gradient(135deg, #1d39c4 0%, #2f54eb 100%);
+    color: #fff;
+    padding: 28px 24px;
+  }
+  .topbar-inner { max-width: 860px; margin: 0 auto; }
+  .topbar h1 { font-size: 20px; font-weight: 600; }
+  .topbar p { margin-top: 6px; font-size: 13px; opacity: .85; }
+  .container { max-width: 860px; margin: 0 auto; padding: 24px; }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 { font-size: 16px; margin-bottom: 6px; }
+  .card .meta { color: #86909c; font-size: 13px; line-height: 1.7; }
+  .card .meta .path {
+    font-family: Menlo, Consolas, monospace;
+    background: #f2f3f5;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .open {
+    flex-shrink: 0;
+    background: #2f54eb;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .open:hover { opacity: .85; }
+  .empty { text-align: center; color: #c9cdd4; padding: 40px 0; }
+  footer { text-align: center; color: #c9cdd4; font-size: 12px; padding: 8px 0 32px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>原型导航</h1>
+    <p>所有原型链接统一收在这里，新原型上线后在此页添加卡片即可。</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="card">
+    <div>
+      <h2>万能验证码管理平台 · 原型</h2>
+      <p class="meta">
+        短信验证码列表查询 + 万能验证码设置弹窗（手机号注册 / 手机号登录 / 登录后修改密码 / 忘记密码，有效期 5 分钟）<br>
+        管理端建议入口：消息管理 → 验证码管理 · 更新于 2026-11-11 · <span class="path">/sms-code-admin/</span>
+      </p>
+    </div>
+    <a class="open" href="./sms-code-admin/index.html" target="_blank" rel="noopener">打开原型</a>
+  </div>
+
+  <!-- 新原型在此追加卡片 -->
+
+  <p class="empty">— 更多原型持续添加中 —</p>
+
+</main>
+
+<footer>静态托管于 GitHub Pages · 链接永久有效</footer>
+
+</body>
+</html>

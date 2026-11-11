@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万能验证码管理平台 · 原型</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>万能验证码管理平台 <span class="tag">原型</span></h1>
+    <p class="sub">适用业务：手机号注册 / 手机号登录 / 登录后修改密码 / 忘记密码 · 验证码有效期统一 5 分钟</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="list">验证码管理</button>
+  <button class="tab" data-tab="api">接口说明</button>
+</nav>
+
+<main class="container">
+
+  <!-- ========== Tab 1: 验证码管理（列表 + 弹窗设置万能码） ========== -->
+  <section id="tab-list" class="panel active">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2>验证码列表</h2>
+          <p class="desc">查询系统下发的验证码，包含系统短信验证码与管理员设置的万能验证码。</p>
+        </div>
+        <button class="btn primary" id="openModal">+ 设置万能验证码</button>
+      </div>
+
+      <div class="filters">
+        <input type="text" id="fPhone" maxlength="11" placeholder="手机号">
+        <select id="fScene">
+          <option value="">全部业务类型</option>
+          <option value="REGISTER">手机号注册</option>
+          <option value="LOGIN">手机号登录</option>
+          <option value="CHANGE_PASSWORD">登录后修改密码</option>
+          <option value="RESET_PASSWORD">忘记密码</option>
+        </select>
+        <select id="fSource">
+          <option value="">全部来源</option>
+          <option value="SYSTEM">系统短信</option>
+          <option value="UNIVERSAL">万能码</option>
+        </select>
+        <select id="fStatus">
+          <option value="">全部状态</option>
+          <option value="VALID">有效</option>
+          <option value="INVALID">已失效</option>
+        </select>
+        <button class="btn primary" id="fSearch">查询</button>
+        <button class="btn ghost" id="fReset">重置</button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>手机号</th>
+            <th>业务类型</th>
+            <th>验证码</th>
+            <th>来源</th>
+            <th>状态</th>
+            <th>生成时间</th>
+            <th>过期时间</th>
+            <th>剩余时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="codeTbody"></tbody>
+      </table>
+      <p class="summary" id="listSummary"></p>
+      <p class="note">原型说明：数据保存在内存中，刷新页面后恢复初始示例数据。有效码超过 5 分钟未使用会自动转为「已失效」。</p>
+    </div>
+  </section>
+
+  <!-- ========== Tab 2: 接口说明 ========== -->
+  <section id="tab-api" class="panel">
+    <div class="card">
+      <h2>接口说明（供管理端联调）</h2>
+
+      <div class="api-block">
+        <h3><span class="method post">POST</span> /admin/sms-codes/universal</h3>
+        <p>设置万能验证码。同一手机号 + 业务类型仅生效一个，重复设置覆盖旧码，并将该组合下未失效的短信验证码置为已失效。</p>
+        <h4>请求参数</h4>
+        <table class="table small">
+          <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>phone</td><td>string</td><td>是</td><td>手机号，11 位数字</td></tr>
+            <tr><td>scene</td><td>string</td><td>是</td><td>业务类型，见下方枚举</td></tr>
+            <tr><td>code</td><td>string</td><td>是</td><td>6 位数字万能验证码</td></tr>
+          </tbody>
+        </table>
+        <h4>请求示例</h4>
+        <pre>{
+  "phone": "13711112222",
+  "scene": "RESET_PASSWORD",
+  "code": "905317"
+}</pre>
+        <h4>响应示例</h4>
+        <pre>{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "id": 10086,
+    "phone": "13711112222",
+    "scene": "RESET_PASSWORD",
+    "code": "905317",
+    "source": "UNIVERSAL",
+    "status": "VALID",
+    "createdAt": "2026-11-05 10:00:00",
+    "expireAt": "2026-11-05 10:05:00"
+  }
+}</pre>
+      </div>
+
+      <div class="api-block">
+        <h3><span class="method get">GET</span> /admin/sms-codes</h3>
+        <p>分页查询系统下发的验证码列表（含短信验证码与万能码）。</p>
+        <h4>查询参数</h4>
+        <table class="table small">
+          <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>phone</td><td>string</td><td>否</td><td>按手机号模糊查询</td></tr>
+            <tr><td>scene</td><td>string</td><td>否</td><td>业务类型，见下方枚举</td></tr>
+            <tr><td>source</td><td>string</td><td>否</td><td>来源：SYSTEM / UNIVERSAL</td></tr>
+            <tr><td>status</td><td>string</td><td>否</td><td>状态：VALID / INVALID</td></tr>
+            <tr><td>page</td><td>int</td><td>否</td><td>页码，默认 1</td></tr>
+            <tr><td>pageSize</td><td>int</td><td>否</td><td>每页条数，默认 20</td></tr>
+          </tbody>
+        </table>
+        <h4>响应示例</h4>
+        <pre>{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "total": 42,
+    "list": [
+      {
+        "id": 10086,
+        "phone": "13711112222",
+        "scene": "RESET_PASSWORD",
+        "code": "905317",
+        "source": "UNIVERSAL",
+        "status": "VALID",
+        "createdAt": "2026-11-05 10:00:00",
+        "expireAt": "2026-11-05 10:05:00"
+      }
+    ]
+  }
+}</pre>
+      </div>
+
+      <div class="api-block">
+        <h3>枚举定义</h3>
+        <table class="table small">
+          <thead><tr><th>枚举</th><th>取值</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="4">scene</td><td>REGISTER</td><td>手机号注册</td></tr>
+            <tr><td>LOGIN</td><td>手机号登录</td></tr>
+            <tr><td>CHANGE_PASSWORD</td><td>登录后修改密码</td></tr>
+            <tr><td>RESET_PASSWORD</td><td>忘记密码</td></tr>
+            <tr><td rowspan="2">source</td><td>SYSTEM</td><td>系统短信下发</td></tr>
+            <tr><td>UNIVERSAL</td><td>管理员设置的万能验证码</td></tr>
+            <tr><td rowspan="2">status</td><td>VALID</td><td>有效（未过期、未被使用）</td></tr>
+            <tr><td>INVALID</td><td>已失效（含已被使用、已过期、被万能码覆盖、管理员作废）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="api-block">
+        <h3>校验规则（C 端验证接口需支持）</h3>
+        <ul class="rules">
+          <li>同一手机号 + 业务类型存在<b>有效</b>万能码时，仅万能码可通过校验，真实短信验证码一律不通过。</li>
+          <li>万能码过期后（5 分钟），回退为按正常短信验证码校验。</li>
+          <li>验证码校验通过后置为「已失效」，不可复用。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ========== 弹窗：设置万能验证码 ========== -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>设置万能验证码</h3>
+      <button class="modal-close" id="closeModal" aria-label="关闭">×</button>
+    </div>
+    <form id="setForm" autocomplete="off">
+      <div class="form-row">
+        <label>手机号 <em>*</em></label>
+        <input type="text" id="setPhone" maxlength="11" placeholder="请输入 11 位手机号">
+      </div>
+      <div class="form-row">
+        <label>业务类型 <em>*</em></label>
+        <select id="setScene">
+          <option value="">请选择业务类型</option>
+          <option value="REGISTER">手机号注册</option>
+          <option value="LOGIN">手机号登录</option>
+          <option value="CHANGE_PASSWORD">登录后修改密码</option>
+          <option value="RESET_PASSWORD">忘记密码</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>万能验证码 <em>*</em></label>
+        <div class="inline">
+          <input type="text" id="setCode" maxlength="6" placeholder="6 位数字">
+          <button type="button" class="btn ghost" id="genCode">随机生成</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>有效期</label>
+        <span class="static">5 分钟（固定，与系统短信验证码一致）</span>
+      </div>
+      <div class="alert">
+        覆盖规则：同一手机号 + 业务类型仅生效一个万能码；新万能码会覆盖旧万能码，且该手机号该业务的<b>真实短信验证码立即失效</b>（列表中标记为「已失效」）。
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn ghost" id="cancelModal">取消</button>
+        <button type="submit" class="btn primary">确认设置</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="js/app.js"></script>
+</body>
+</html>
