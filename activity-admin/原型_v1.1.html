@@ -93,4 +93,5 @@ function metricDefinitions(){$('#layer').innerHTML=`<div class="overlay"><sectio
 function exportStats(){let q=queryFor('stats');downloadCsv([['活动ID','活动名称','参与人数','获奖人数','已确认USD','已到账USD','当前未到账USD'],...selectedActivities('stats').map(a=>{let d=dataFor([a.id],q);return[a.id,a.name,d.participants,d.winners,d.confirmedAmount,d.paidAmount,d.outstanding]})],'多活动_数据汇总.csv')}
 
 go('activities');
-</script></body></html>
+</script><script src="/assets/proto-home.js"></script>
+</body></html>
