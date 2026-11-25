@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>支付渠道管理 - APP渠道号配置 原型</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f3f5f9;color:#1f2329;font-size:14px}
+  .layout{display:flex;min-height:100vh}
+  .main{flex:1;min-width:0}
+  .notes{width:380px;flex-shrink:0;background:#fffdf5;border-left:1px solid #f0e2b8;padding:20px 20px 40px;height:100vh;position:sticky;top:0;overflow:auto}
+  .notes h2{font-size:16px;margin-bottom:4px}
+  .notes .sub{color:#8a7a4a;font-size:12px;margin-bottom:16px}
+  .note{background:#fff;border:1px solid #f0e2b8;border-radius:8px;padding:12px 14px;margin-bottom:12px;line-height:1.7;font-size:13px}
+  .note h3{font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .note ul{padding-left:18px}
+  .note li{margin:2px 0}
+  .note.todo{border-color:#ffccc7;background:#fff7f6}
+  .note.why{border-color:#b7d3ff;background:#f4f8ff}
+  .tag-new{background:#ff4d4f;color:#fff;font-size:11px;padding:1px 6px;border-radius:4px;font-weight:normal}
+  .mk{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#ff4d4f;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+  .rel{position:relative;display:inline-block}
+  .pin{position:absolute;top:-10px;right:-12px;z-index:5;box-shadow:0 0 0 2px #fff}
+
+  .header{display:flex;align-items:center;gap:18px;padding:24px 28px;background:#f7f8fb;border-bottom:1px solid #e8eaf0}
+  .logo{width:56px;height:56px;border-radius:12px;background:#fff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:28px}
+  .header h1{font-size:22px;font-weight:600}
+  .toolbar{display:flex;gap:12px;padding:20px 14px 14px;align-items:center;flex-wrap:wrap}
+  .input,.select{height:36px;border:1px solid #e5e7eb;border-radius:6px;padding:0 12px;background:#fff;color:#999;width:170px;display:flex;align-items:center;justify-content:space-between}
+  select.fsel{height:36px;border:1px solid #d9dce3;border-radius:6px;padding:0 10px;background:#fff;width:200px;font-size:14px;color:#1f2329}
+  .hl{outline:2px dashed #ff4d4f;outline-offset:3px}
+  .btn{height:36px;padding:0 18px;border-radius:6px;border:1px solid #d9dce3;background:#fff;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+  .btn.primary{background:#1d4ef5;color:#fff;border-color:#1d4ef5}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .bar2{display:flex;align-items:center;gap:12px;padding:0 14px 14px}
+  .bar2 .sel-info{color:#8c8f96;font-size:13px}
+  .card{background:#fff;margin:0 14px;border-radius:14px;padding:24px;border:1px solid #eef0f4;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:1250px}
+  th{background:#f5f6f8;text-align:left;padding:16px;font-weight:600;white-space:nowrap}
+  td{padding:16px;border-bottom:1px solid #f0f1f4;white-space:nowrap}
+  tr:nth-child(even) td{background:#fafbfc}
+  th.newcol{background:#fff1f0}
+  input[type=checkbox]{width:15px;height:15px;cursor:pointer;vertical-align:middle}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .g{background:#22b07d}.gr{background:#999}
+  a{color:#1d4ef5;text-decoration:none;margin-right:20px;cursor:pointer}
+  a.new{position:relative}
+  .tags{display:flex;gap:6px;align-items:center}
+  .tag{display:inline-block;background:#eef2ff;color:#1d4ef5;border-radius:4px;padding:2px 8px;font-size:12px}
+  .tag.all{background:#e8f7f0;color:#14905f}
+  .tag.none{background:#f2f3f5;color:#8c8f96}
+  .tag.more{background:#f2f3f5;color:#4e5969;cursor:default}
+  td.appcol{width:250px;max-width:250px}
+  .tags.hov{cursor:default;padding:4px 6px;margin:-4px -6px;border-radius:6px}
+  .tags.hov:hover{background:#eef2ff}
+  .tags .cnt{color:#8c8f96;font-size:12px;margin-left:2px}
+  .tip{position:fixed;z-index:45;width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);padding:12px 14px;display:none}
+  .tip.show{display:block}
+  .tip-h{font-size:13px;margin-bottom:8px;display:flex;gap:6px;align-items:center}
+  .tip-h span{color:#8c8f96;margin-left:auto}
+  .tip input{width:100%;height:30px;border:1px solid #d9dce3;border-radius:6px;padding:0 10px;font-size:12px;margin-bottom:8px}
+  .tip-b{display:flex;flex-wrap:wrap;gap:6px;max-height:180px;overflow:auto}
+  .empty-row td{text-align:center;color:#999;padding:40px}
+
+  /* modal */
+  .mask{position:fixed;top:0;left:0;bottom:0;right:380px;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+  .mask.show{display:flex}
+  .modal{width:560px;max-width:calc(100% - 40px);background:#fff;border-radius:12px;display:flex;flex-direction:column}
+  .m-head{padding:18px 24px;border-bottom:1px solid #f0f1f4;display:flex;justify-content:space-between;align-items:center}
+  .m-head h3{font-size:17px}
+  .close{cursor:pointer;font-size:20px;color:#999;border:none;background:none}
+  .m-body{padding:20px 24px}
+  .m-foot{padding:14px 24px;border-top:1px solid #f0f1f4;display:flex;justify-content:flex-end;gap:10px}
+  .info-box{background:#f7f8fa;border-radius:8px;padding:12px 14px;font-size:13px;color:#4e5969;line-height:1.9;margin-bottom:20px}
+  .info-box b{color:#1f2329}
+  .warn{color:#d46b08}
+  .row{display:flex;gap:16px;margin-bottom:18px}
+  .row .lb{width:84px;flex-shrink:0;text-align:right;padding-top:8px;color:#4e5969}
+  .row .lb .req{color:#ff4d4f;margin-right:2px}
+  .row .ct{flex:1;min-width:0}
+  .radios{display:flex;gap:22px;padding-top:7px;flex-wrap:wrap}
+  .radios label{display:flex;align-items:center;gap:6px;cursor:pointer}
+  .radios input{width:15px;height:15px}
+  .hint{color:#8c8f96;font-size:12px;margin-top:6px;line-height:1.6}
+
+  /* 多选下拉 */
+  .ms{position:relative}
+  .ms-box{min-height:38px;border:1px solid #d9dce3;border-radius:6px;padding:4px 30px 4px 6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;background:#fff}
+  .ms-box.focus{border-color:#1d4ef5;box-shadow:0 0 0 2px rgba(29,78,245,.12)}
+  .ms-box::after{content:"⌄";position:absolute;right:12px;top:8px;color:#999}
+  .chip{background:#f2f3f5;border-radius:4px;padding:2px 6px 2px 8px;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+  .chip i{font-style:normal;color:#999;cursor:pointer;padding:0 2px}
+  .chip i:hover{color:#ff4d4f}
+  .ms-box input{border:none;outline:none;flex:1;min-width:80px;height:26px;font-size:13px}
+  .ms-drop{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:10;display:none;max-height:240px;overflow:auto;padding:4px}
+  .ms-drop.show{display:block}
+  .ms-opt{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+  .ms-opt:hover{background:#f5f7ff}
+  .ms-all{border-bottom:1px solid #f0f1f4;border-radius:6px 6px 0 0;margin-bottom:2px}
+  .ms-opt.on{color:#1d4ef5;font-weight:600;background:#f0f4ff}
+  .ms-opt .d{color:#8c8f96;font-weight:normal;margin-left:6px}
+  .ms-opt .ck{visibility:hidden}
+  .ms-opt.on .ck{visibility:visible}
+  .ms-tools{display:flex;justify-content:space-between;padding:6px 10px;border-top:1px solid #f0f1f4;font-size:12px;position:sticky;bottom:-4px;background:#fff}
+  .ms-tools span{color:#1d4ef5;cursor:pointer}
+  .ms-err{color:#ff4d4f;font-size:12px;margin-top:6px;display:none}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#fff;padding:10px 18px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.15);display:none;z-index:99}
+  .toast.show{display:block}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+  <div class="header">
+    <div class="logo">💹</div>
+    <h1>支付渠道管理</h1>
+  </div>
+
+  <div class="toolbar">
+    <div class="input">渠道编码</div>
+    <div class="input">渠道名称</div>
+    <div class="select">渠道状态 <span>⌄</span></div>
+    <span class="rel"><select class="fsel hl" id="filterApp" onchange="renderTable()"></select><span class="mk pin">3</span></span>
+    <button class="btn primary">🔍 查询</button>
+    <button class="btn" onclick="$('filterApp').value='';renderTable()">↺ 重置</button>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>排序</th><th>渠道编码</th><th>入金配置状态</th><th>出金区间</th><th>出金配置状态</th><th>出金服务费比例</th><th>最后更新时间</th><th>渠道状态</th>
+        <th class="newcol"><span class="rel">展示APP渠道号<span class="mk pin" style="right:-26px">1</span></span></th><th>操作</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 右侧说明 -->
+<aside class="notes">
+  <h2>📝 需求说明</h2>
+  <div class="sub">功能：配置支付渠道在哪些 APP 渠道号展示 ｜ v0.4 ｜ 2026-11-25</div>
+
+  <div class="note why">
+    <h3>🎯 功能目的</h3>
+    <ul>
+      <li>按 <b>APP 渠道包</b>控制支付通道的使用范围。</li>
+      <li>某支付通道<b>配置了</b>哪些渠道号，就只有从这些渠道包安装 APP 的用户，才能在入金/出金页看到并使用该支付通道。</li>
+      <li><b>没配置</b>的渠道号，对应渠道包的 APP 无法使用该支付通道（入金/出金页不展示）。</li>
+      <li>例：HSBC 只配置了 official、appstore → 官网包和 App Store 包用户可以用 HSBC 入金；华为包用户看不到 HSBC。</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3><span class="mk">1</span>新增列「展示APP渠道号」 <span class="tag-new">新增</span></h3>
+    <ul>
+      <li>位置：「渠道状态」与「操作」之间，只读。</li>
+      <li>全选 → 绿色标签「全部渠道号」，悬停同样展示全部渠道号明细。</li>
+      <li>部分选择 → 固定列宽，最多显示 2 个标签，其余折叠为「+N」，行高不随数量变化。</li>
+      <li>鼠标悬停单元格 → 浮层展示全部已选渠道号（标签平铺，超出滚动）。</li>
+      <li>未选 → 灰色「无（不展示）」。</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3><span class="mk">2</span>操作列「配置渠道号」 <span class="tag-new">新增</span></h3>
+    <ul>
+      <li>点击弹出配置弹窗，标题显示当前支付渠道编码。</li>
+      <li>表单只有一个字段：<b>展示渠道号</b>（下拉多选，必填）。</li>
+      <li>下拉首项为「全选」；全部选中时输入框内合并显示为一个「全部渠道号」标签，点 × 清空。</li>
+      <li>支持搜索；已选项以标签展示，点 × 删除，退格键删除最后一个；输入框内最多展示 6 个标签，其余折叠为「+N」，在下拉列表中查看/取消。</li>
+      <li>至少选 1 个，否则提示「请选择渠道号」。</li>
+      <li>确定后保存，刷新该行及「最后更新时间」，Toast「保存成功」；权限同「编辑」按钮。</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3><span class="mk">3</span>筛选「APP渠道号」 <span class="tag-new">新增</span></h3>
+    <ul>
+      <li>选中某渠道号，列表只显示在该渠道号展示的支付渠道（含「全部」的）。</li>
+      <li>用于查看「某个包的 APP 能看到哪些支付渠道」。</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3>📱 APP 展示规则</h3>
+    <ul>
+      <li>APP 请求时上报自身渠道号，支付渠道需<b>同时满足</b>才展示：
+        <br>① 展示渠道号包含该渠道号（或为全选）；
+        <br>② 渠道状态 = 启用；
+        <br>③ 入金页看入金配置状态，出金页看出金配置状态 = 开启。</li>
+      <li>排序沿用「排序」字段；无可用渠道时 APP 显示「暂无可用支付方式，请联系客服」。</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3>⚙️ 默认与兼容</h3>
+    <ul>
+      <li>上线时存量支付渠道统一初始化为全选，与线上现状一致。</li>
+      <li>新增支付渠道默认全选。</li>
+      <li>旧版本 APP 未上报渠道号：只展示全选的支付渠道。</li>
+      <li>所有修改记录操作日志：操作人、时间、支付渠道、修改前后的值。</li>
+    </ul>
+  </div>
+
+</aside>
+</div>
+
+<!-- 单个配置 -->
+<div class="mask" id="mSingle">
+  <div class="modal">
+    <div class="m-head"><h3 id="sTitle">配置展示渠道号</h3><button class="close" onclick="closeM('mSingle')">✕</button></div>
+    <div class="m-body">
+      <div class="row" id="sPickRow">
+        <div class="lb"><span class="req">*</span>展示渠道号</div>
+        <div class="ct"><div id="msSingle"></div><div class="hint">下拉多选，支持搜索、全选。仅在所选渠道号的 APP 中展示该支付渠道。</div></div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn" onclick="closeM('mSingle')">取消</button><button class="btn primary" onclick="saveSingle()">确定</button></div>
+  </div>
+</div>
+
+
+<!-- 确认 -->
+<div class="mask" id="cfm" style="z-index:60">
+  <div class="modal" style="width:420px">
+    <div class="m-head"><h3>确认操作</h3></div>
+    <div class="m-body" style="line-height:1.7" id="cfmText"></div>
+    <div class="m-foot"><button class="btn" onclick="cfmClose()">取消</button><button class="btn primary" onclick="cfmOk()">确认</button></div>
+  </div>
+</div>
+
+<div class="tip" id="tip" onmouseenter="clearTimeout(tipTimer)" onmouseleave="hideTip()">
+  <div class="tip-h" id="tipHead"></div>
+  <div class="tip-b" id="tipBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const appChannels = [
+    {id:'official',   name:'官网包'},
+    {id:'appstore',   name:'App Store'},
+    {id:'googleplay', name:'Google Play'},
+    {id:'huawei',     name:'华为应用市场'},
+    {id:'xiaomi',     name:'小米应用商店'},
+    {id:'oppo',       name:'OPPO 软件商店'},
+    {id:'vivo',       name:'vivo 应用商店'},
+    {id:'honor',      name:'荣耀应用市场'},
+    {id:'yyb',        name:'腾讯应用宝'},
+    {id:'samsung',    name:'Samsung Galaxy Store'},
+    {id:'apkpure',    name:'APKPure'},
+    {id:'h5',         name:'H5 落地页包'},
+    {id:'ib_1001',    name:'IB 推广渠道 1001'},
+    {id:'ib_1002',    name:'IB 推广渠道 1002'},
+    {id:'ib_1003',    name:'IB 推广渠道 1003'},
+    {id:'ib_1004',    name:'IB 推广渠道 1004'},
+    {id:'kol_01',     name:'KOL 推广 01'},
+    {id:'kol_02',     name:'KOL 推广 02'},
+    {id:'ads_fb',     name:'Facebook 投放'},
+  ];
+  const ALL_IDS = appChannels.map(a=>a.id);
+  const MAX_CHIP = 6; // 下拉框内最多展示的标签数
+  const payChannels = [
+    {sort:-1, code:'mulletpay',  depOn:true,  range:'10 ~ 1000',   wdOn:true,  fee:'0%', time:'2026-11-20 18:42:26', enabled:false, apps:['official','appstore']},
+    {sort:0,  code:'TRADING365', depOn:false, range:'100 ~ 21000', wdOn:true,  fee:'0%', time:'2026-11-25 16:00:01', enabled:true,  apps:'ALL'},
+    {sort:10, code:'HSBC',       depOn:true,  range:'0 ~ 0',       wdOn:false, fee:'0%', time:'2026-11-20 14:39:53', enabled:true,  apps:['official','appstore','googleplay','huawei','xiaomi','oppo','vivo','honor','yyb','ib_1001','ib_1002','kol_01','ads_fb']},
+  ];
+  const nameOf = id => (appChannels.find(a=>a.id===id)||{}).name || id;
+  const hasApp = (c,id) => c.apps==='ALL' || c.apps.includes(id);
+  const nowStr = () => { const n=new Date(),p=x=>String(x).padStart(2,'0'); return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`; };
+  const ordered = arr => ALL_IDS.filter(id=>arr.includes(id));
+
+  // ---------- 多选下拉组件 ----------
+  function MultiSelect(host){
+    const s = {val:[], q:'', open:false};
+    host.innerHTML = `<div class="ms"><div class="ms-box"></div><div class="ms-drop"></div></div><div class="ms-err">请选择渠道号</div>`;
+    const box = host.querySelector('.ms-box'), drop = host.querySelector('.ms-drop'), err = host.querySelector('.ms-err');
+    function render(keepFocus){
+      const full = s.val.length===ALL_IDS.length;
+      box.innerHTML = (full ? `<span class="chip" style="background:#e8f7f0;color:#14905f">全部渠道号<i data-rm="__all">×</i></span>`
+        : s.val.slice(0,MAX_CHIP).map(id=>`<span class="chip">${id}<i data-rm="${id}">×</i></span>`).join('') + (s.val.length>MAX_CHIP?`<span class="chip" style="padding-right:8px;color:#4e5969">+${s.val.length-MAX_CHIP}</span>`:'')) +
+        `<input placeholder="${s.val.length?'':'请选择或搜索渠道号'}" value="${s.q}">`;
+      box.classList.toggle('focus', s.open);
+      const list = appChannels.filter(a => !s.q || (a.id+a.name).toLowerCase().includes(s.q.toLowerCase()));
+      const allRow = s.q ? '' : `<div class="ms-opt ms-all ${full?'on':''}" data-act="toggleAll"><span><input type="checkbox" ${full?'checked':''} style="pointer-events:none;margin-right:8px">全选 <span class="d">${s.val.length}/${ALL_IDS.length}</span></span></div>`;
+      drop.innerHTML = allRow + (list.length ? list.map(a=>`<div class="ms-opt ${s.val.includes(a.id)?'on':''}" data-id="${a.id}"><span>${a.id}<span class="d">${a.name}</span></span><span class="ck">✓</span></div>`).join('')
+        : '<div style="padding:14px;color:#999;text-align:center;font-size:13px">无匹配渠道号</div>');
+      drop.classList.toggle('show', s.open);
+      const inp = box.querySelector('input');
+      inp.oninput = e => { s.q = e.target.value; render(true); };
+      inp.onkeydown = e => { if(e.key==='Backspace' && !s.q && s.val.length){ s.val.pop(); render(true);} };
+      if(keepFocus){ inp.focus(); inp.setSelectionRange(s.q.length,s.q.length); }
+    }
+    box.addEventListener('mousedown', e => {
+      e.stopPropagation();
+      const rm = e.target.dataset.rm;
+      if(rm){ e.preventDefault(); s.val = rm==='__all' ? [] : s.val.filter(x=>x!==rm); render(s.open); return; }
+      if(!s.open){ s.open = true; err.style.display='none'; render(true); e.preventDefault(); }
+    });
+    drop.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const opt = e.target.closest('.ms-opt');
+      if(opt && opt.dataset.act==='toggleAll'){ s.val = s.val.length===ALL_IDS.length ? [] : [...ALL_IDS]; }
+      else if(opt){ const id = opt.dataset.id; s.val = s.val.includes(id) ? s.val.filter(x=>x!==id) : ordered([...s.val,id]); }
+      err.style.display='none'; render(true);
+    });
+    document.addEventListener('mousedown', e => { if(s.open && !host.contains(e.target)){ s.open=false; s.q=''; render(); } });
+    render();
+    return {
+      get:()=>[...s.val],
+      set:v=>{ s.val=[...v]; s.q=''; s.open=false; err.style.display='none'; render(); },
+      error:()=>{ err.style.display='block'; }
+    };
+  }
+  const msSingle = MultiSelect($('msSingle'));
+
+  // ---------- 列表 ----------
+  $('filterApp').innerHTML = '<option value="">APP渠道号（全部）</option>' + appChannels.map(a=>`<option value="${a.id}">${a.id}（${a.name}）</option>`).join('');
+  function appTags(c){
+    const hov = `class="tags hov" onmouseenter="showTip(event,'${c.code}')" onmouseleave="hideTip()"`;
+    if(c.apps==='ALL') return `<div ${hov}><span class="tag all">全部渠道号</span></div>`;
+    if(!c.apps.length) return '<span class="tag none">无（不展示）</span>';
+    let h = c.apps.slice(0,2).map(id=>`<span class="tag">${id}</span>`).join('');
+    if(c.apps.length>2) h += `<span class="tag more">+${c.apps.length-2}</span>`;
+    return `<div ${hov}>${h}</div>`;
+  }
+  function renderTable(){
+    const f = $('filterApp').value;
+    const rows = payChannels.filter(c => !f || hasApp(c,f)).sort((a,b)=>a.sort-b.sort);
+    const st = on => on ? '<span class="dot g"></span>开启' : '关闭';
+    $('tbody').innerHTML = rows.length ? rows.map((c,i) => `
+      <tr><td>${c.sort}</td><td>${c.code}</td><td>${st(c.depOn)}</td><td>${c.range}</td><td>${st(c.wdOn)}</td>
+      <td>${c.fee}</td><td>${c.time}</td><td>${c.enabled?'<span class="dot g"></span>启用':'<span class="dot gr"></span>停用'}</td>
+      <td class="appcol">${appTags(c)}</td>
+      <td><a>详情</a><a>编辑</a><a class="new" onclick="openSingle('${c.code}')">配置渠道号${i===0?'<span class="mk pin">2</span>':''}</a></td></tr>`).join('')
+      : '<tr class="empty-row"><td colspan="10">该渠道号下暂无展示的支付渠道</td></tr>';
+  }
+
+  // ---------- 悬停浮层：完整渠道号 ----------
+  let tipTimer=null;
+  function showTip(e, code){
+    clearTimeout(tipTimer);
+    const c = payChannels.find(x=>x.code===code), tip=$('tip'), r=e.currentTarget.getBoundingClientRect();
+    $('tipHead').innerHTML = `<b>${code}</b> 展示渠道号`;
+    tip.dataset.code=code; renderTip();
+    tip.classList.add('show');
+    let top=r.bottom+6; if(top+tip.offsetHeight>innerHeight-10) top=r.top-tip.offsetHeight-6;
+    tip.style.top=Math.max(10,top)+'px'; tip.style.left=Math.max(10,Math.min(r.left, innerWidth-400-tip.offsetWidth))+'px';
+  }
+  function renderTip(){
+    const c = payChannels.find(x=>x.code===$('tip').dataset.code);
+    const ids = c.apps==='ALL' ? ALL_IDS : c.apps;
+    $('tipBody').innerHTML = ids.map(id=>`<span class="tag" title="${nameOf(id)}">${id}</span>`).join('');
+  }
+  function hideTip(){ tipTimer=setTimeout(()=>$('tip').classList.remove('show'),150); }
+
+  // ---------- 单个配置 ----------
+  let sCode = null;
+  function openSingle(code){
+    sCode = code; const c = payChannels.find(x=>x.code===code);
+    $('sTitle').textContent = `配置展示渠道号 · ${code}`;
+    msSingle.set(c.apps==='ALL' ? ALL_IDS : c.apps);
+    $('mSingle').classList.add('show');
+  }
+  function saveSingle(){
+    const v = msSingle.get();
+    if(!v.length) return msSingle.error();
+    const c = payChannels.find(x=>x.code===sCode);
+    c.apps = v.length===ALL_IDS.length ? 'ALL' : v; c.time = nowStr();
+    closeM('mSingle'); renderTable(); toast('保存成功');
+  }
+
+  // ---------- 通用 ----------
+  function closeM(id){ $(id).classList.remove('show'); }
+  let cfmCb=null;
+  function askConfirm(html, cb){ $('cfmText').innerHTML = html; cfmCb = cb; $('cfm').classList.add('show'); }
+  function cfmClose(){ $('cfm').classList.remove('show'); cfmCb=null; }
+  function cfmOk(){ const cb=cfmCb; cfmClose(); cb&&cb(); }
+  function toast(t){ const el=$('toast'); el.textContent='✅ '+t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1800); }
+
+  renderTable();
+</script>
+<script src="/assets/proto-home.js"></script>
+</body>
+</html>
