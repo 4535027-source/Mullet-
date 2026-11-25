@@ -22,4 +22,5 @@ function personDetail(id){let p=people.find(x=>x.id===id);$('#layer').innerHTML=
 function releaseDetail(deal){let r=logs.find(x=>x.deal===deal),p=people.find(x=>x.id===r.id);$('#layer').innerHTML=`<div class="overlay"><div class="drawer" style="width:min(1350px,96vw)"><div class="titlebar"><div><h1>交易明细</h1><span class="muted">本笔奖励关联的平仓成交</span></div><button onclick="closeLayer()">关闭</button></div><div class="card"><div class="filters" style="gap:24px"><span>用户：<strong>${r.id}</strong></span><span>发放单号：${r.deal}</span><span>发放时间：${r.time}</span><span>奖励金额：<strong>$${fmt(r.amount)}</strong></span><span>${tag(r.result)}</span></div>${tradeTable(r.trades.map(t=>({...t,level:p.level})))}<div style="text-align:right;margin-top:20px">平仓手数合计：<strong>${Number(r.trades.reduce((n,t)=>n+t.lots,0).toFixed(8))}手</strong>　 释放金额合计：<strong>$${fmt(r.trades.reduce((n,t)=>n+t.amount,0))}</strong></div><p class="muted">符合条件的成交按本次平仓手数 × 每手费率释放，金额受剩余赠金额度限制。此例展示分次平仓关联同一发放记录，生产按现有发放方式关联。</p></div></div></div>`}
 function explainExisting(name){toast(name+'是原有操作；本次原型仅保留入口，不执行停发或禁止参与')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer()});list();
-</script></body></html>
+</script><script src="/assets/proto-home.js"></script>
+</body></html>
