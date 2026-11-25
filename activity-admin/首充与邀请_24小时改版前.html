@@ -47,4 +47,5 @@ function inviteUserDetail(user,kind='被邀请人'){let p=invitePeople.find(x=>x
 function invitePayDetail(id){let p=invitePays.find(x=>x.id===id),ts=p.deals.map(id=>({...inviteTrades.find(x=>x.deal===id),fee:inviteRate(inviteTrades.find(x=>x.deal===id).symbol,p.kind)}));$('#layer').innerHTML=`<div class="overlay"><div class="drawer" style="width:min(1350px,96vw)"><div class="titlebar"><div><h1>交易明细 · ${p.kind}</h1><div class="muted">发放单号 ${p.id}</div></div><button onclick="closeLayer()">关闭</button></div><div class="card"><div class="filters"><span>交易人（被邀请人）：<strong>${p.user}</strong></span><span>收款人：<strong>${p.payee}</strong></span><span>发放时间：${p.time}</span><span>${tag('已发放')}</span></div>${inviteTradeTable(ts)}<div style="text-align:right;margin-top:20px">平仓手数合计：<strong>${Number(ts.reduce((n,t)=>n+t.lots,0).toFixed(8))}手</strong>　奖励合计：<strong>$${fmt(invitePayAmount(p))}</strong></div><p class="muted">使用每笔平仓成交自己的时间和手数。明细奖励合计与当前发放金额一致；汇总发放为演示，生产沿用原方式。</p></div></div></div>`}
 
 list();
-</script></body></html>
+</script><script src="/assets/proto-home.js"></script>
+</body></html>
