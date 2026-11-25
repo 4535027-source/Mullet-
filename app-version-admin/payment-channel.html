@@ -383,5 +383,8 @@
 
   renderTable();
 </script>
+<!-- 返回原型导航首页按钮（在 iframe 内嵌或 ?embed=1 时自动隐藏） -->
+<a id="protoHomeBtn" href="/" title="返回原型导航首页" style="position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#1f2329;color:#fff;font:13px/1.2 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:.88">← 原型导航</a>
+<script>(function(){var b=document.getElementById('protoHomeBtn');if(!b)return;var e=false;try{e=window.top!==window.self}catch(x){e=true}if(e||new URLSearchParams(location.search).get('embed')==='1')b.style.display='none';b.onmouseenter=function(){b.style.opacity='1'};b.onmouseleave=function(){b.style.opacity='.88'}})();</script>
 </body>
 </html>
