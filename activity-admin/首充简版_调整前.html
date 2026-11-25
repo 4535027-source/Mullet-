@@ -20,4 +20,5 @@ function personDetail(id){let p=people.find(x=>x.id===id);$('#layer').innerHTML=
 function releaseDetail(deal){let r=logs.find(x=>x.deal===deal);$('#layer').innerHTML=`<div class="overlay"><div class="modal"><h2>释放明细</h2><div class="kv"><span>来源成交</span><span>${r.deal}</span><span>用户 / 品种</span><span>${r.id} / ${r.symbol}</span><span>有效持仓</span><span>${r.seconds}秒</span><span>有效手数</span><span>${r.lots}手</span><span>档位费率</span><span>$${r.rate}/标准手</span><span>本次释放</span><strong>${r.lots} × $${r.rate} = $${fmt(r.amount)}</strong><span>到账结果</span><span>${r.result}</span></div>${note('真实实现需关联成交唯一编号及资金流水，确保重复回调不重复释放。')}<button onclick="closeLayer()">关闭</button></div></div>`}
 function explainExisting(name){toast(name+'是原有操作；本次原型仅保留入口，不执行停发或禁止参与')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer()});list();
-</script></body></html>
+</script><script src="/assets/proto-home.js"></script>
+</body></html>
