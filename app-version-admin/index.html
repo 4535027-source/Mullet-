@@ -27,11 +27,16 @@ html{scroll-padding-block:20px}body{overflow-wrap:break-word}.shell,.main,.conte
     <aside class="sidebar">
       <div><a class="logo" href="#prototype" aria-label="Mullet 首页">mullet<span>.</span></a><div class="logo-sub">MANAGEMENT<br>CONSOLE</div></div>
       <div class="nav-group">APP 版本管理</div>
-      <nav class="side-nav" aria-label="页面导航"><a class="active" href="#prototype">交互原型与字段</a><a href="#rules">需求说明</a></nav>
+      <nav class="side-nav" aria-label="页面导航"><a class="active" href="#prototype" data-view="version">交互原型与字段</a><a href="#rules" data-view="version">需求说明</a></nav>
+      <div class="nav-group" style="margin-top:22px">支付渠道管理</div>
+      <nav class="side-nav" aria-label="支付渠道管理导航"><a href="#payment-channel" data-view="payment">APP渠道号配置</a></nav>
     </aside>
     <main class="main">
       <header class="topbar"><div class="topbar-left"><span class="menu-icon">☰</span>运营管理</div><div class="topbar-right"><span class="prototype-badge">版本管理原型</span><span class="admin-name">Mullet 管理员</span></div></header>
       <nav class="subnav" aria-label="页内导航"><a class="active" href="#prototype">版本管理</a><a href="#field-guide">需求说明</a></nav>
+      <section id="paymentChannelView" hidden aria-label="支付渠道管理 · APP渠道号配置原型">
+        <iframe src="./payment-channel.html" title="支付渠道管理 · APP渠道号配置原型" style="display:block;width:100%;height:calc(100vh - 64px);border:0" loading="lazy"></iframe>
+      </section>
       <div class="content" id="prototype">
         <div class="breadcrumb">运营管理 / 版本管理</div>
         <div class="page-heading"><h1>版本管理</h1><p>第一版 · 单版本单渠道</p></div>
@@ -87,6 +92,20 @@ html{scroll-padding-block:20px}body{overflow-wrap:break-word}.shell,.main,.conte
     </main>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    // 侧边栏切换：#payment-channel 显示支付渠道原型，其余锚点显示版本管理原型
+    (function(){
+      const pay=document.getElementById('paymentChannelView'),ver=document.getElementById('prototype'),sub=document.querySelector('.subnav'),badge=document.querySelector('.prototype-badge');
+      function route(){
+        const isPay=location.hash==='#payment-channel';
+        pay.hidden=!isPay; ver.hidden=isPay; if(sub)sub.hidden=isPay;
+        if(badge)badge.textContent=isPay?'支付渠道管理原型':'版本管理原型';
+        document.querySelectorAll('.side-nav a').forEach(a=>a.classList.toggle('active',isPay?a.dataset.view==='payment':(a.getAttribute('href')===(location.hash||'#prototype'))||(!location.hash&&a.getAttribute('href')==='#prototype')));
+        if(isPay)window.scrollTo(0,0);
+      }
+      window.addEventListener('hashchange',route);route();
+    })();
+  </script>
   <script>
     "use strict";
     const byId=id=>document.getElementById(id);
