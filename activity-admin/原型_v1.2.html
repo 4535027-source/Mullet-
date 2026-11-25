@@ -121,4 +121,5 @@ retryBatch=function(id){let rs=rewards.filter(r=>r.batch===id&&r.state==='发放
 function exportHubRewards(){let q=hubQ(hubId);let rows=rewards.filter(r=>r.activity===hubId&&inRange(r.confirmed,q)&&(r.id+r.deal+r.trader+r.payee+r.state+r.type).includes(q.text));downloadCsv([['活动','奖励编号','来源单','类型','收款人','金额USD','状态'],...rows.map(r=>[activity(r.activity).name,r.id,r.deal,r.type,r.payee,r.amount,r.state])],activity(hubId).name+'_模拟奖励明细.csv')}
 
 go('activities');
-</script></body></html>
+</script><script src="/assets/proto-home.js"></script>
+</body></html>
