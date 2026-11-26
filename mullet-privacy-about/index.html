@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mullet · 隐私弹窗与关于页原型</title>
+<style>
+  :root{
+    --brand:#2F6BFF; --brand-dark:#1F4FD6; --brand-soft:#EAF0FF;
+    --ink:#141A26; --ink2:#4A5263; --ink3:#8A92A3; --line:#ECEEF2; --bg:#F5F6F8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","MiSans","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+       background:#E9ECF1;color:var(--ink);padding:40px 24px 60px}
+  h1{text-align:center;font-size:22px;font-weight:600;margin-bottom:6px}
+  .sub{text-align:center;color:var(--ink3);font-size:13px;margin-bottom:36px}
+  .stage{display:flex;gap:56px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+  .col{width:360px}
+  .label{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .label i{font-style:normal;background:var(--ink);color:#fff;border-radius:10px;font-size:12px;padding:1px 8px}
+
+  /* phone */
+  .phone{width:360px;height:780px;border-radius:36px;background:#000;padding:8px;box-shadow:0 20px 50px rgba(20,26,38,.18)}
+  .screen{position:relative;width:100%;height:100%;border-radius:29px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+  .status{height:32px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 22px;font-size:13px;font-weight:600}
+  .status .icons{display:flex;gap:5px;align-items:center}
+  .status .icons span{display:inline-block;background:currentColor;border-radius:2px}
+  .navbar{height:20px;flex:none;display:flex;justify-content:center;align-items:center}
+  .navbar span{width:110px;height:4px;border-radius:2px;background:#1a1a1a;opacity:.85}
+
+  /* ---------- Screen 1: consent ---------- */
+  .s1{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 38%,#FFFFFF 62%)}
+  .s1 .body{flex:1;padding:22px 26px 0;display:flex;flex-direction:column;min-height:0}
+  .logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(140deg,#4C82FF,#1F4FD6);
+        display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(47,107,255,.28)}
+  .logo svg{width:34px;height:34px}
+  .s1 h2{font-size:22px;font-weight:700;margin:16px 0 10px;letter-spacing:.5px}
+  .s1 .intro{font-size:13.5px;line-height:1.7;color:var(--ink2)}
+  .s1 a{color:var(--brand);text-decoration:none;font-weight:500}
+  .points{margin:14px 0 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 14px;overflow:auto}
+  .pt{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .pt:last-child{border-bottom:none}
+  .pt .ic{flex:none;width:28px;height:28px;border-radius:8px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center}
+  .pt .ic svg{width:16px;height:16px;stroke:var(--brand);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .pt b{display:block;font-size:13.5px;font-weight:600;margin-bottom:2px}
+  .pt p{font-size:12px;line-height:1.55;color:var(--ink3)}
+  .note{font-size:11.5px;line-height:1.6;color:var(--ink3);margin-top:12px}
+  .btns{flex:none;padding:16px 28px 10px;background:#fff}
+  .btn{display:block;width:100%;height:48px;border-radius:12px;border:none;font-size:16px;font-family:inherit;font-weight:600}
+  .btn.primary{background:var(--brand);color:#fff}
+  .btn.ghost{background:transparent;color:var(--ink3);font-weight:500;margin-top:6px;height:42px;font-size:15px}
+
+  /* ---------- Screen 2: about ---------- */
+  .s2{background:var(--bg)}
+  .topbar{height:52px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;background:var(--bg)}
+  .topbar .back{position:absolute;left:14px;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+  .topbar .back svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .topbar h3{font-size:17px;font-weight:600}
+  .s2 .scroll{flex:1;overflow:auto;padding:0 16px 8px}
+  .hero{text-align:center;padding:10px 0 18px}
+  .hero .logo{margin:0 auto;width:64px;height:64px;border-radius:17px}
+  .hero .logo svg{width:38px;height:38px}
+  .hero .name{font-size:19px;font-weight:700;margin-top:10px}
+  .hero .ver{font-size:13px;color:var(--ink3);margin-top:4px}
+  .group-title{font-size:12.5px;color:var(--ink3);margin:0 6px 6px;letter-spacing:.3px}
+  .card{background:#fff;border-radius:14px;margin-bottom:16px;overflow:hidden}
+  .row{display:flex;align-items:center;min-height:48px;padding:0 16px;border-bottom:1px solid var(--line);font-size:15px}
+  .row:last-child{border-bottom:none}
+  .row .k{flex:none;color:var(--ink)}
+  .row .v{flex:1;text-align:right;color:var(--ink2);font-size:14px;word-break:break-all;padding-left:12px}
+  .row .chev{flex:none;width:16px;height:16px;margin-left:6px;stroke:#C2C7D0;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .row .grow{flex:1}
+  .row .v.link{color:var(--brand)}
+  .info .row{min-height:44px}
+  .info .row .k{color:var(--ink3);font-size:14px}
+  .info .row .v{color:var(--ink);font-size:14px}
+  .footer{text-align:center;font-size:11.5px;line-height:1.8;color:var(--ink3);padding:6px 0 4px}
+
+  /* annotations */
+  .notes{margin-top:18px;background:#fff;border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+  .notes b{color:var(--ink)}
+  .notes ol{padding-left:18px}
+  .tag{display:inline-block;background:#FFF3D6;color:#8A5A00;border-radius:4px;padding:0 5px;font-size:11.5px}
+</style>
+</head>
+<body>
+<h1>Mullet · 隐私弹窗与关于页</h1>
+<div class="sub">原型 v1 · 2026-11-26 · 文案依据《Mullet 隐私政策》《Mullet 用户协议》（2026年11月26日版）</div>
+
+<div class="stage">
+
+  <!-- ============ Screen 1 ============ -->
+  <div class="col">
+    <div class="label"><i>01</i>首次启动 · 隐私协议弹窗</div>
+    <div class="phone"><div class="screen s1">
+      <div class="status"><span>9:41</span><span class="icons"><span style="width:16px;height:9px"></span><span style="width:14px;height:9px"></span><span style="width:22px;height:10px;border-radius:3px"></span></span></div>
+      <div class="body">
+        <div class="logo"><svg viewBox="0 0 40 40" fill="none"><rect x="9" y="6" width="22" height="28" rx="4" stroke="#fff" stroke-width="2.6"/><path d="M14 15h12M14 20.5h12M14 26h7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+        <h2>欢迎使用 Mullet</h2>
+        <p class="intro">使用前，请仔细阅读<a href="#">《用户协议》</a>和<a href="#">《隐私政策》</a>。根据《常见类型移动互联网应用程序必要个人信息范围规定》，Mullet 属于实用工具类（文档扫描及文字识别）应用，基本功能无需收集个人信息。</p>
+
+        <div class="points">
+          <div class="pt"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 17h6"/></svg></div>
+            <div><b>文件只在本机处理</b><p>扫描、识别、翻译、格式转换均在设备本地完成，文件不会离开您的手机。</p></div></div>
+          <div class="pt"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M3 3l18 18"/></svg></div>
+            <div><b>无需账户，无广告</b><p>无需注册登录，不提供广告和个性化推荐，未接入第三方 SDK。</p></div></div>
+          <div class="pt"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+            <div><b>权限按需申请</b><p>相机、相册等权限在使用对应功能时才申请；位置仅用于自动地点水印。</p></div></div>
+        </div>
+
+        <p class="note">点击“同意并使用”，仅代表您已阅读并同意上述协议，不代表您同意开启任何设备权限。</p>
+      </div>
+      <div class="btns">
+        <button class="btn primary">同意并使用</button>
+        <button class="btn ghost">不同意</button>
+      </div>
+      <div class="navbar" style="background:#fff"><span></span></div>
+    </div></div>
+
+    <div class="notes">
+      <b>交互说明</b>
+      <ol>
+        <li>首次安装后启动时展示。同意之前<b>不发起任何网络请求，不申请任何权限</b>（开发实现要求第 5 条）。</li>
+        <li>点击《用户协议》《隐私政策》，在 App 内打开全文页，返回后仍停留在本页。</li>
+        <li>点击“不同意”：弹出二次确认，提示“不同意将无法使用 Mullet”，选项为“查看协议”和“退出应用”。不得反复弹窗强迫同意。</li>
+        <li>同意后记录同意状态和协议版本号。协议有重大更新时，重新展示本弹窗。</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ============ Screen 2 ============ -->
+  <div class="col">
+    <div class="label"><i>02</i>我的 → 关于</div>
+    <div class="phone"><div class="screen s2">
+      <div class="status"><span>9:41</span><span class="icons"><span style="width:16px;height:9px"></span><span style="width:14px;height:9px"></span><span style="width:22px;height:10px;border-radius:3px"></span></span></div>
+      <div class="topbar">
+        <div class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+        <h3>关于</h3>
+      </div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="logo"><svg viewBox="0 0 40 40" fill="none"><rect x="9" y="6" width="22" height="28" rx="4" stroke="#fff" stroke-width="2.6"/><path d="M14 15h12M14 20.5h12M14 26h7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+          <div class="name">Mullet</div>
+          <div class="ver">版本 1.0.0</div>
+        </div>
+
+        <div class="group-title">协议与清单</div>
+        <div class="card">
+          <div class="row"><span class="k">用户协议</span><span class="grow"></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="row"><span class="k">隐私政策</span><span class="grow"></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="row"><span class="k">个人信息收集清单</span><span class="grow"></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="row"><span class="k">第三方服务与 SDK 清单</span><span class="grow"></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+        </div>
+
+        <div class="group-title">备案信息</div>
+        <div class="card info">
+          <div class="row"><span class="k">App 名称</span><span class="v">Mullet</span></div>
+          <div class="row"><span class="k">包名</span><span class="v">com.mulletapp</span></div>
+          <div class="row"><span class="k">备案号</span><span class="v link">沪ICP备2026060363号-2A</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="row"><span class="k">运营者</span><span class="v">上海珈灏科技有限公司</span></div>
+        </div>
+
+        <div class="footer">
+          联系我们：support@mullet.top<br>
+          Copyright © 2026 上海珈灏科技有限公司 版权所有
+        </div>
+      </div>
+      <div class="navbar"><span></span></div>
+    </div></div>
+
+    <div class="notes">
+      <b>交互说明</b>
+      <ol>
+        <li>入口：“我的”→“关于”。隐私政策和用户协议中写的入口路径要同步改成这里。</li>
+        <li>四个清单项都在 App 内打开对应文档或附录，不需要联网。</li>
+        <li>点击备案号，用系统浏览器打开 <b>beian.miit.gov.cn</b>（工信部备案查询）。</li>
+        <li>长按“包名”“联系邮箱”可以复制。</li>
+        <li>包名 <b>com.mulletapp</b> 必须和备案登记的包名一致；版本号读取实际 versionName。</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+<script src="/assets/proto-home.js"></script>
+</body>
+</html>
