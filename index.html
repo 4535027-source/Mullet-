@@ -52,6 +52,13 @@
   .open:hover { opacity: .85; }
   .empty { text-align: center; color: #c9cdd4; padding: 40px 0; }
   footer { text-align: center; color: #c9cdd4; font-size: 12px; padding: 8px 0 32px; }
+  .card h2 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .status { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 10px; line-height: 1.5; }
+  .status.doing { color: #d46b08; background: #fff7e6; border: 1px solid #ffd591; }
+  .status.done { color: #389e0d; background: #f6ffed; border: 1px solid #b7eb8f; }
+  .group { font-size: 15px; color: #1f2329; margin: 8px 0 12px; }
+  .group span { font-size: 12px; color: #86909c; font-weight: normal; }
+  .group:not(:first-child) { margin-top: 28px; }
 </style>
 </head>
 <body>
@@ -65,50 +72,22 @@
 
 <main class="container">
 
+  <h3 class="group">进行中 <span>（按更新时间倒序）</span></h3>
+  <!-- 新原型在此追加卡片：放在「进行中」最上面，状态标签用 <span class="status doing">进行中</span> -->
+
   <div class="card">
     <div>
-      <h2>万能验证码管理平台 · 原型</h2>
+      <h2>Mullet · 隐私协议弹窗与关于页原型<span class="status doing">进行中</span></h2>
       <p class="meta">
-        短信验证码列表查询 + 万能验证码设置弹窗（手机号注册 / 手机号登录 / 登录后修改密码 / 忘记密码，有效期 5 分钟）<br>
-        管理端建议入口：消息管理 → 验证码管理 · 更新于 2026-11-11 · <span class="path">/sms-code-admin/</span>
+        首次启动隐私协议弹窗 / 我的 → 关于（协议与双清单入口、备案信息）· 更新于 2026-11-26 · <span class="path">/mullet-privacy-about/</span>
       </p>
     </div>
-    <a class="open" href="./sms-code-admin/index.html" target="_blank" rel="noopener">打开原型</a>
+    <a class="open" href="./mullet-privacy-about/index.html" target="_blank" rel="noopener">打开原型</a>
   </div>
 
   <div class="card">
     <div>
-      <h2>Mullet 活动后台 · 首充24小时定档原型</h2>
-      <p class="meta">
-        首充活动规则 / 邀请活动 / 历史版本（v1.0–v1.2）· 更新于 2026-11-16 · <span class="path">/activity-admin/</span>
-      </p>
-    </div>
-    <a class="open" href="./activity-admin/index.html" target="_blank" rel="noopener">打开原型</a>
-  </div>
-
-  <div class="card">
-    <div>
-      <h2>汇丰银行 · 支付渠道与入金原型</h2>
-      <p class="meta">
-        支付渠道管理 / 银行卡入金 · 更新于 2026-11-19 · <span class="path">/hsbc-payment-deposit/</span>
-      </p>
-    </div>
-    <a class="open" href="./hsbc-payment-deposit/prototypes.html" target="_blank" rel="noopener">打开原型</a>
-  </div>
-
-  <div class="card">
-    <div>
-      <h2>Mullet · APP 版本管理原型</h2>
-      <p class="meta">
-        应用版本发布管理（含规则配置）· 更新于 2026-11-23 · <span class="path">/app-version-admin/</span>
-      </p>
-    </div>
-    <a class="open" href="./app-version-admin/index.html" target="_blank" rel="noopener">打开原型</a>
-  </div>
-
-  <div class="card">
-    <div>
-      <h2>支付渠道管理 · APP渠道号配置原型</h2>
+      <h2>支付渠道管理 · APP渠道号配置原型<span class="status doing">进行中</span></h2>
       <p class="meta">
         按 APP 渠道包控制支付通道可用范围（展示APP渠道号列 + 配置渠道号）· 更新于 2026-11-25 · <span class="path">/payment-channel/</span>
       </p>
@@ -118,15 +97,46 @@
 
   <div class="card">
     <div>
-      <h2>Mullet · 隐私协议弹窗与关于页原型</h2>
+      <h2>Mullet · APP 版本管理原型<span class="status doing">进行中</span></h2>
       <p class="meta">
-        首次启动隐私协议弹窗 / 我的 → 关于（协议与双清单入口、备案信息）· 更新于 2026-11-26 · <span class="path">/mullet-privacy-about/</span>
+        应用版本发布管理（含规则配置）· 更新于 2026-11-23 · <span class="path">/app-version-admin/</span>
       </p>
     </div>
-    <a class="open" href="./mullet-privacy-about/index.html" target="_blank" rel="noopener">打开原型</a>
+    <a class="open" href="./app-version-admin/index.html" target="_blank" rel="noopener">打开原型</a>
   </div>
 
-  <!-- 新原型在此追加卡片 -->
+  <h3 class="group">已完成 <span>（按更新时间倒序）</span></h3>
+
+  <div class="card">
+    <div>
+      <h2>汇丰银行 · 支付渠道与入金原型<span class="status done">已完成</span></h2>
+      <p class="meta">
+        支付渠道管理 / 银行卡入金 · 更新于 2026-11-19 · <span class="path">/hsbc-payment-deposit/</span>
+      </p>
+    </div>
+    <a class="open" href="./hsbc-payment-deposit/prototypes.html" target="_blank" rel="noopener">打开原型</a>
+  </div>
+
+  <div class="card">
+    <div>
+      <h2>Mullet 活动后台 · 首充24小时定档原型<span class="status done">已完成</span></h2>
+      <p class="meta">
+        首充活动规则 / 邀请活动 / 历史版本（v1.0–v1.2）· 更新于 2026-11-16 · <span class="path">/activity-admin/</span>
+      </p>
+    </div>
+    <a class="open" href="./activity-admin/index.html" target="_blank" rel="noopener">打开原型</a>
+  </div>
+
+  <div class="card">
+    <div>
+      <h2>万能验证码管理平台 · 原型<span class="status done">已完成</span></h2>
+      <p class="meta">
+        短信验证码列表查询 + 万能验证码设置弹窗（手机号注册 / 手机号登录 / 登录后修改密码 / 忘记密码，有效期 5 分钟）<br>
+        管理端建议入口：消息管理 → 验证码管理 · 更新于 2026-11-11 · <span class="path">/sms-code-admin/</span>
+      </p>
+    </div>
+    <a class="open" href="./sms-code-admin/index.html" target="_blank" rel="noopener">打开原型</a>
+  </div>
 
   <p class="empty">— 更多原型持续添加中 —</p>
 
